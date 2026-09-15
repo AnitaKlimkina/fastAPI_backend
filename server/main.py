@@ -1,11 +1,11 @@
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator, List
 
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from db.database import engine, session
-from db.models import Users, Base, Tweets
+from server.app.db.database import engine, session
+from server.app.db import Users, Base, Tweets
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -84,7 +84,7 @@ async def delete_tweet_by_id(id_tweet: int, db: AsyncSession = Depends(get_db)):
     Endpoint delete the tweet by its id
     """
     try:
-        pass
+        a = 1
 
     except Exception as e:
         return {"result": False, "error_type": type(e), "error_message": e}
