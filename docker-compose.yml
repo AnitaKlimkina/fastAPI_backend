@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./server/app
+    container_name: backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@postgres:5432/twitter_db
+    depends_on:
+      - postgres
+    volumes:
+        - ./server/app:/app/app
+
+  client:
+    build: ./client
+    container_name: client
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+
+  postgres:
+    image: postgres:latest
+    container_name: db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: twitter_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/
+
