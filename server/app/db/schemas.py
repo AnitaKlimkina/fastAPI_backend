@@ -1,33 +1,32 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class BaseResponse(BaseModel):
     result: bool
 
-class BaseRecipe(BaseModel):
-    title: str
-    time_cooking: int
+
+class FollowersResponse(BaseModel):
+    id: int = Field(..., validation_alias="id_user")
+    name: str
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+class FollowingResponse(BaseModel):
+    id: int = Field(..., validation_alias="id_user")
+    name: str
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 
-class AllRecipesOut(BaseRecipe):
-    id_recipe: int
-    count_views: int
+class UserResponse(BaseModel):
+    id: int = Field(..., validation_alias="id_user")
+    name: str
+    followers: list[FollowersResponse]
+    following: list[FollowingResponse]
 
-    class Config:
-        from_attributes = True
-
-
-class RecipeIn(BaseRecipe):
-    ingredients: str
-    description: str
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 
-class RecipeOut(BaseRecipe):
-    id_recipe: int
-    ingredients: str
-    description: str
-
-    class Config:
-        from_attributes = True
-
+class AboutUserResponse(BaseResponse):
+    user: UserResponse
 

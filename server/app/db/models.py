@@ -8,16 +8,22 @@ followers = Table("followers", Base.metadata,
                   Column("follower_id", Integer, ForeignKey("users.id_user"), primary_key=True),
                   Column("followed_id", Integer, ForeignKey("users.id_user"), primary_key=True))
 
+
 class Users(Base):
     __tablename__ = "users"
     id_user = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     api_key = Column(String, nullable=False)
-    tweets = relationship("Tweets", back_populates="authors", cascade="all, delete-orphan", lazy='joined')
-    followed = relationship("Users",
-                            secondary=followers,
-                            primaryjoin = "Users.id_user==followers.c.follower_id",
-                            secondaryjoin= "Users.id_user==followers.c.followed_id", backref="followers")
+    tweets = relationship("Tweets", back_populates="authors",
+                          cascade="all, delete-orphan")
+
+    following = relationship(
+        "Users",
+        secondary=followers,
+        primaryjoin="Users.id_user==followers.c.follower_id",
+        secondaryjoin="Users.id_user==followers.c.followed_id",
+        backref="followers",
+    )
 
     likes = relationship("Likes", back_populates="users")
     def to_json(self):
@@ -30,7 +36,7 @@ class Tweets(Base):
     content = Column(String, nullable=False)
     id_author = Column(Integer, ForeignKey("users.id_user"))
 
-    media = relationship("Media", back_populates="tweets", cascade="all, delete-orphan", lazy='joined')
+    media = relationship("Media", back_populates="tweets", cascade="all, delete-orphan")
     authors = relationship("Users", back_populates="tweets")
     likes = relationship("Likes", back_populates="tweets")
 

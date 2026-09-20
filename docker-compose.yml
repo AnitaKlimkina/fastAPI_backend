@@ -12,6 +12,7 @@ services:
       - postgres
     volumes:
         - ./server/app:/app/app
+        - ./frontend:/usr/share/nginx/html
 
   client:
     build: ./client
