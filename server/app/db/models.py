@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -55,11 +55,11 @@ class Media(Base):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-
 class Likes(Base):
     __tablename__ = "likes"
+    __table_args__ = (UniqueConstraint("id_user", "id_tweet", name="unique_user_tweet_like"),)
     id = Column(Integer, primary_key=True)
-    id_user = Column(Integer, ForeignKey("users.id_user", ondelete="CASCADE"), nullable=False)
+    id_user = Column(Integer, ForeignKey("users.id_user"), nullable=False)
     id_tweet = Column(Integer, ForeignKey("tweets.id_tweet"))
 
     users = relationship("Users", back_populates="likes")

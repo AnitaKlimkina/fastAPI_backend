@@ -13,6 +13,7 @@ services:
     volumes:
         - ./server/app:/app/app
         - ./frontend:/usr/share/nginx/html
+        - ./uploads:/app/uploads
 
   client:
     build: ./client
@@ -21,6 +22,8 @@ services:
       - "80:80"
     depends_on:
       - backend
+    volumes:
+      - ./uploads:/app/uploads
 
 
   postgres:
