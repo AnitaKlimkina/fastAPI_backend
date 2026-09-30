@@ -11,6 +11,7 @@ class FollowersResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
+
 class FollowingResponse(BaseModel):
     id: int = Field(..., validation_alias="id_user")
     name: str
@@ -30,11 +31,14 @@ class UserResponse(BaseModel):
 class AboutUserResponse(BaseResponse):
     user: UserResponse
 
+
 class MediaResponse(BaseResponse):
     media_id: int
 
+
 class TweetResponse(BaseResponse):
     tweet_id: int
+
 
 class TweetAuthorResponse(BaseModel):
     id: int = Field(..., validation_alias="id_user")
@@ -63,9 +67,11 @@ class TweetItemResponse(BaseModel):
 class AllTweetsResponse(BaseResponse):
     tweets: list[TweetItemResponse]
 
+
 class TweetCreate(BaseModel):
     tweet_data: str
     tweet_media_ids:list[int] = []
+
 
 class LikeCreate(BaseResponse):
     id_user: int
