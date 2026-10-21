@@ -1,26 +1,29 @@
+import os
+from pathlib import Path
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from sqlalchemy import select
-from app.db.database import engine, AsyncSessionLocal
-from app.api import users, tweets, media
-from app.core.exceptions import register_exception_handlers
-from app.db.models import Users, Base
+from db.database import engine, AsyncSessionLocal
+from api import users, tweets, media
+from core.exceptions import register_exception_handlers
+from db.models import Users, Base
 
+UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "/app/uploads"))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
     async with AsyncSessionLocal() as session:
         async with session.begin():
             existing = await session.execute(
-                select(Users.id_user).where(Users.api_key == "test_api"))
+                select(Users.id_user).where(Users.api_key == "api_key"))
             if existing.scalar_one_or_none() is None:
-                session.add(Users(name="test_user", api_key="test_api"))
-                await session.commit()
+                session.add(Users(name="user", api_key="api_key"))
 
     yield
     await engine.dispose()
