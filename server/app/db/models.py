@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, UniqueConstraint
 from sqlalchemy.orm import relationship
 
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
+
 Base = declarative_base()
 
 followers = Table("followers", Base.metadata,
@@ -16,13 +17,19 @@ class Users(Base):
     api_key = Column(String, nullable=False)
     tweets = relationship("Tweets", back_populates="authors",
                           cascade="all, delete-orphan")
-
     following = relationship(
         "Users",
         secondary=followers,
         primaryjoin="Users.id_user==followers.c.follower_id",
         secondaryjoin="Users.id_user==followers.c.followed_id",
-        backref="followers",
+        back_populates="followers",  # ← вместо backref
+    )
+    followers = relationship(
+        "Users",
+        secondary=followers,
+        primaryjoin="Users.id_user==followers.c.followed_id",
+        secondaryjoin="Users.id_user==followers.c.follower_id",
+        back_populates="following",  # ← явно
     )
 
     likes = relationship("Likes", back_populates="users")

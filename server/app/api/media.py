@@ -1,17 +1,16 @@
 import uuid
+import os
 from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException, Header, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import Media
-from app.db.schemas import MediaResponse
-from app.db.database import get_db
-
+from db.models import Media
+from db.schemas import MediaResponse
+from db.database import get_db
 
 router = APIRouter(prefix="/api/medias", tags=["media"])
 
-UPLOAD_DIR = Path("/app/uploads")
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "/app/uploads"))
 
 @router.post("", response_model=MediaResponse)
 async def save_media(

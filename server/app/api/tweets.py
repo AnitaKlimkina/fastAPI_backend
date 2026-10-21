@@ -3,9 +3,9 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.database import get_db
-from app.db.models import Tweets, Likes, Media, Users
-from app.db.schemas import (
+from db.database import get_db
+from db.models import Tweets, Likes, Media, Users
+from db.schemas import (
     AllTweetsResponse,
     TweetCreate,
     BaseResponse,
@@ -14,7 +14,8 @@ from app.db.schemas import (
     TweetLikeResponse,
     TweetItemResponse
 )
-from app.api.deps import get_user_by_api_key
+from api.deps import get_user_by_api_key
+
 
 router = APIRouter(prefix="/api/tweets", tags=["tweets"])
 
