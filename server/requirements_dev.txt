@@ -1,0 +1,9 @@
+-r requirements.txt
+flake8
+wemake-python-styleguide
+mypy
+pytest
+pytest-asyncio
+pytest-cov
+aiosqlite
+flake8-bugbear
