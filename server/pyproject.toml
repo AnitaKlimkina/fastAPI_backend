@@ -1,0 +1,15 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["tests/*", "*/__init__.py"]
+data_file = "tests/reports/.coverage"
+
+[tool.mypy]
+python_version = "3.11"
+explicit_package_bases = true
+namespace_packages = true
+ignore_missing_imports = true

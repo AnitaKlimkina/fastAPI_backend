@@ -11,6 +11,7 @@ from db.models import Users, Base
 
 UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "/app/uploads"))
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
@@ -21,9 +22,9 @@ async def lifespan(app: FastAPI):
     async with AsyncSessionLocal() as session:
         async with session.begin():
             existing = await session.execute(
-                select(Users.id_user).where(Users.api_key == "api_key"))
+                select(Users.id_user).where(Users.api_key == "test"))
             if existing.scalar_one_or_none() is None:
-                session.add(Users(name="user", api_key="api_key"))
+                session.add(Users(name="test", api_key="test"))
 
     yield
     await engine.dispose()
@@ -36,4 +37,3 @@ register_exception_handlers(app)
 app.include_router(users.router)
 app.include_router(tweets.router)
 app.include_router(media.router)
-
