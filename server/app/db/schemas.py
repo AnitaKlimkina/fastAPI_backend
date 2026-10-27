@@ -1,26 +1,29 @@
+# noqa: WPS202
 from pydantic import BaseModel, Field, ConfigDict
+
+ID_USER_ALIAS = "id_user"
 
 
 class BaseResponse(BaseModel):
-    result: bool
+    result: bool  # noqa: WPS110
 
 
 class FollowersResponse(BaseModel):
-    id: int = Field(..., validation_alias="id_user")
+    id: int = Field(..., validation_alias=ID_USER_ALIAS)
     name: str
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 
 class FollowingResponse(BaseModel):
-    id: int = Field(..., validation_alias="id_user")
+    id: int = Field(..., validation_alias=ID_USER_ALIAS)
     name: str
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 
 class UserResponse(BaseModel):
-    id: int = Field(..., validation_alias="id_user")
+    id: int = Field(..., validation_alias=ID_USER_ALIAS)
     name: str
     followers: list[FollowersResponse]
     following: list[FollowingResponse]
@@ -41,14 +44,14 @@ class TweetResponse(BaseResponse):
 
 
 class TweetAuthorResponse(BaseModel):
-    id: int = Field(..., validation_alias="id_user")
+    id: int = Field(..., validation_alias=ID_USER_ALIAS)
     name: str
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 
 class TweetLikeResponse(BaseModel):
-    user_id: int = Field(..., validation_alias="id_user")
+    user_id: int = Field(..., validation_alias=ID_USER_ALIAS)
     name: str
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
@@ -56,7 +59,7 @@ class TweetLikeResponse(BaseModel):
 
 class TweetItemResponse(BaseModel):
     id: int
-    content: str
+    content: str  # noqa: WPS110
     attachments: list[str]
     author: TweetAuthorResponse
     likes: list[TweetLikeResponse]
@@ -70,7 +73,7 @@ class AllTweetsResponse(BaseResponse):
 
 class TweetCreate(BaseModel):
     tweet_data: str
-    tweet_media_ids:list[int] = []
+    tweet_media_ids: list[int] = []
 
 
 class LikeCreate(BaseResponse):

@@ -13,13 +13,19 @@ def test_save_media(client):
         files={"file": file},  # ← files= для UploadFile
     )
 
-    print("STATUS:", response.status_code)
-    print("BODY:", response.text)
-
-
     # 3. Проверяем ответ
     assert response.status_code == 200
     body = response.json()
     assert body["result"] is True
     assert "media_id" in body
     media_id = body["media_id"]
+
+
+def test_save_media_without_file_name(client):
+    response = client.post(
+        "/api/medias",
+        headers={"api-key": "test_api_1"},
+    )
+    assert response.status_code == 422
+    body = response.json()
+    assert body["result"] is False

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,24 +21,34 @@ async def user_follow_user_by_id(
     Endpoint let user follows other user by his id
     """
     if id_user == id:
-        raise HTTPException(status_code=400, detail="Cannot follow yourself")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot follow yourself")
     res = await db.execute(
         select(Users)
         .options(selectinload(Users.following))
-        .where(Users.id_user==id_user)
+        .where(Users.id_user == id_user)
     )
     cur_user = res.scalar_one_or_none()
+    if cur_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API key")
 
     res = await db.execute(
         select(Users)
-        .where(Users.id_user==id)
+        .where(Users.id_user == id)
     )
     followed_user = res.scalar_one_or_none()
 
     if followed_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found")
     if followed_user in cur_user.following:
-        raise HTTPException(status_code=400, detail="Already following")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Already following")
 
     cur_user.following.append(followed_user)
     await db.commit()
@@ -60,16 +70,24 @@ async def cancel_follow_user_by_id(
         .where(Users.id_user == id_user)
     )
     cur_user = res.scalar_one_or_none()
+    if cur_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API key")
 
     res = await db.execute(
         select(Users)
-        .where(Users.id_user==id)
+        .where(Users.id_user == id)
     )
     followed_user = res.scalar_one_or_none()
     if followed_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found")
     if followed_user not in cur_user.following:
-        raise HTTPException(status_code=404, detail="Follow not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Follow not found")
 
     cur_user.following.remove(followed_user)
     await db.commit()
@@ -93,7 +111,9 @@ async def get_info_about_me(
         .where(Users.id_user == id_user))
     user = res.scalar_one_or_none()
     if user is None:
-        raise HTTPException(status_code=401, detail="Invalid API key")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API key")
 
     return AboutUserResponse(result=True, user=user)
 
@@ -114,6 +134,8 @@ async def get_info_about_user(
         .where(Users.id_user == id))
     user = res.scalar_one_or_none()
     if user is None:
-        raise HTTPException(status_code=401, detail="Invalid API key")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found")
 
     return AboutUserResponse(result=True, user=user)
