@@ -4,10 +4,8 @@ import shutil
 from pathlib import Path
 
 
-# ← Папка для тестовых загрузок
 TEST_UPLOADS_DIR = Path(__file__).parent / "test_uploads"
 
-# ← Устанавливаем env ДО импорта media.py
 os.environ["UPLOAD_DIR"] = str(TEST_UPLOADS_DIR)
 sys.path.insert(0, str(Path(__file__).parent.parent / "app"))
 
@@ -77,3 +75,9 @@ def client():
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+@pytest_asyncio.fixture
+async def db_session():
+    """Сессия к тестовой БД"""
+    async with TestSessionLocal() as session:
+        yield session

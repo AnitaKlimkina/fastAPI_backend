@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt requirements-dev.txt /tmp/
+COPY requirements.txt requirements_dev.txt /tmp/
 
 # Указываем зеркало PyPI (пример с GitVerse, можно заменить на Tsinghua)
 # Это заставит pip качать пакеты не с pypi.org, а с доступного зеркала
@@ -13,20 +13,10 @@ ENV PIP_TRUSTED_HOST=pypi.tuna.tsinghua.edu.cn
 ENV PIP_DEFAULT_TIMEOUT=120
 ENV PIP_RETRIES=5
 
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements_dev.txt
 
 COPY app/ ./app/
 
 WORKDIR /app/app
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-
-
-
-#FROM python:3.11-slim
-#WORKDIR /app
-#COPY requirements.txt requirements-dev.txt /tmp/
-#RUN pip install --no-cache-dir -r /tmp/requirements-dev.txt
-#COPY app/ ./app/
-#WORKDIR /app/app
-#CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
