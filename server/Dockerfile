@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt /tmp/requirements.txt
+
+# Указываем зеркало PyPI (пример с GitVerse, можно заменить на Tsinghua)
+# Это заставит pip качать пакеты не с pypi.org, а с доступного зеркала
+ENV PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
+ENV PIP_TRUSTED_HOST=pypi.tuna.tsinghua.edu.cn
+
+# Увеличиваем таймаут и количество попыток на случай нестабильной сети
+ENV PIP_DEFAULT_TIMEOUT=120
+ENV PIP_RETRIES=5
+
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY app/ ./app/
+
+WORKDIR /app/app
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

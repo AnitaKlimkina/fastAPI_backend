@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    container_name: backend_dev
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@postgres:5432/{POSTGRES_DB}
+    depends_on:
+      - postgres
+    volumes:
+        - ./server/app:/app/app
+        - ./uploads:/app/uploads
+
+  client:
+    build: ./client
+    container_name: client_dev
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./uploads:/app/uploads
+
+
+  postgres:
+    image: postgres:latest
+    container_name: db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/
+
